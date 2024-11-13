@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown </title>
+    <script src="https://cdn.jsdelivr.net/npm/tsparticles@2/tsparticles.bundle.min.js"></script>
+    <style>
+            .audio-player {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        background-color: transparent;
+        padding: 10px 20px;
+        border-radius: 10px;
+        max-width: 300px;
+        margin: 20px auto;
+        color: #fff;
+    }
+
+    #playPauseBtn {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        cursor: pointer;
+    }
+
+    #progressBar {
+        width: 100px;
+        cursor: pointer;
+        background: #444;
+    }
+
+    #progressBar::-webkit-slider-thumb {
+        appearance: none;
+        background-color: #4CAF50;
+        height: 8px;
+        width: 8px;
+        border-radius: 50%;
+    }
+        body, html {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            color: white;
+        }
+        #tsparticles { position: absolute; width: 100%; height: 100%; z-index: -1; }
+        .container {
+            position: relative;
+            z-index: 1;
+            margin-top: 50px;
+        }
+        .moon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(1);
+            width: 200px;
+            height: 200px;
+            background-image: url('https://www.nasa.gov/wp-content/uploads/2016/11/full-moon-2016-lro.jpg');
+            background-size: cover;
+            background-position: center;
+            border-radius: 50%;
+            animation: pulse 10s infinite alternate;
+        }
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            10% { transform: translate(-50%, -50%) scale(1.1); }
+            20% { transform: translate(-50%, -50%) scale(1.2); }
+            40% { transform: translate(-50%, -50%) scale(1.3); }
+            60% { transform: translate(-50%, -50%) scale(1.4); }
+            80% { transform: translate(-50%, -50%) scale(1.6); }
+            100% { transform: translate(-50%, -50%) scale(1.8); }
+        }
+        input[type="text"] {
+            padding: 10px;
+            font-size: 16px;
+            width: 80%;
+            background-color: transparent;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 5px;
+            margin-top: 10px;
+            outline: none;
+        }
+        input[type="text"]::placeholder {
+            color: #aaa;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: transparent;
+            color: white;
+            border: none;
+            border: 1px solid #555;
+            border-radius: 5px;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #777;
+        }
+        .countdown {
+            font-size: 24px;
+            margin-top: 20px;
+        }
+            /* Modal Styles */
+    .modal {
+        display: none; /* Hidden by default */
+        position: fixed;
+        z-index: 2;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+    }
+    
+    .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: #222;
+        padding: 20px;
+        width: 80%;
+        max-width: 500px;
+        border-radius: 10px;
+        text-align: center;
+        color: #fff;
+    }
+
+    .close {
+        position: absolute;
+        top: 10px;
+        right: 20px;
+        font-size: 24px;
+        color: #fff;
+        cursor: pointer;
+    }
+    </style>
+</head>
+<body>
+
+<!-- Particle Background -->
+<div id="tsparticles"></div>
+<audio autoplay loop>
+    <source src="audio/hbd.mp3" type="audio/mpeg">
+    Your browser isn't invited for super fun audio time.
+</audio>
+<div class="audio-player">
+    <button id="playPauseBtn">Play</button>
+    <input id="progressBar" type="range" value="0" max="100">
+    <span id="currentTime">0:00</span> / <span id="duration">0:00</span>
+</div>
+
+<audio id="backgroundAudio" autoplay loop>
+    <source src="audio/morse.wav" type="audio/mpeg">
+    Your browser isn't invited for super fun audio time.
+</audio>
+<!-- Phased Moon Element -->
+<div class="moon"></div>
+<div id="morse_code"></div>
+<div class="container">
+    <h1>The Moon is Still Beautiful, <span style="color: red;">isn't it</span>?!</h1>
+    <p>Translate it to alpha characters and put it inside the input</p>
+    <input type="text" id="textInput" placeholder="Enter letters here" maxlength="100">
+    <button id="openModalBtn" >Submit</button>
+    <div class="countdown" id="countdown"></div>
+</div>
+<!-- Modal Structure -->
+<div id="modal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>21-01-2025</h2>
+        <p>چاوەڕێ بکە تا کاتی خۆی دێت ئەمەیان لەوەی پار زۆر خۆشتر و جوانتر دەر ئەچێت دڵنیام😁</p>
+        <p>ئەزانم چەن ئەم گۆرانیەت خۆشئەوێت😅</p>
+         <audio class="song1" autoplay controls loop>
+        <source src="audio/chawakam.mp3"></source>
+	   Your browser isn't invited for super fun audio time.
+    </audio>
+    </div>
+</div>
+<script>
+
+
+    // Close modal when clicking outside the modal content
+    window.addEventListener("click", (event) => {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    });
+        const audio = document.getElementById("backgroundAudio");
+    const playPauseBtn = document.getElementById("playPauseBtn");
+    const progressBar = document.getElementById("progressBar");
+    const currentTimeSpan = document.getElementById("currentTime");
+    const durationSpan = document.getElementById("duration");
+
+    // Update play/pause button and audio state
+    playPauseBtn.addEventListener("click", () => {
+        if (audio.paused) {
+            audio.play();
+            playPauseBtn.innerText = "Pause";
+        } else {
+            audio.pause();
+            playPauseBtn.innerText = "Play";
+        }
+    });
+
+    // Update progress bar and time display
+    audio.addEventListener("timeupdate", () => {
+        progressBar.value = (audio.currentTime / audio.duration) * 100;
+        currentTimeSpan.innerText = formatTime(audio.currentTime);
+    });
+
+    // Update duration display when audio metadata is loaded
+    audio.addEventListener("loadedmetadata", () => {
+        durationSpan.innerText = formatTime(audio.duration);
+    });
+
+    // Seek functionality
+    progressBar.addEventListener("input", () => {
+        audio.currentTime = (progressBar.value / 100) * audio.duration;
+    });
+
+    // Format time in mm:ss
+    function formatTime(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const secs = Math.floor(seconds % 60).toString().padStart(2, "0");
+        return `${minutes}:${secs}`;
+    }
+    tsParticles.load("tsparticles", {
+        background: { color: { value: "#000000FF" } },
+        particles: {
+            number: { value: 300, density: { enable: true, area: 800 } },
+            color: { value: ["#ffffff", "#d3d3d3", "#a9c4ff", "#ffe7ba"] },
+            shape: { type: "star" },
+            opacity: {
+                value: 1,
+                random: true,
+                animation: {
+                    enable: true,
+                    speed: 0.8,
+                    minimumValue: 0.2,
+                    sync: false
+                }
+            },
+            size: {
+                value: { min: 0.5, max: 3 },
+                random: true,
+                animation: {
+                    enable: true,
+                    speed: 2,
+                    minimumValue: 0.1,
+                    sync: false
+                }
+            },
+            move: {
+                enable: true,
+                speed: 0.1,
+                direction: "none",
+                random: true,
+                straight: false,
+                outModes: { default: "out" }
+            },
+            twinkle: {
+                particles: {
+                    enable: true,
+                    frequency: 0.1,
+                    opacity: 0.8
+                }
+            }
+        },
+        interactivity: {
+            events: {
+                onHover: { enable: true, mode: "repulse" },
+                onClick: { enable: true, mode: "push" }
+            },
+            modes: {
+                repulse: { distance: 100, duration: 0.4 },
+                push: { quantity: 4 }
+            }
+        },
+        detectRetina: true
+    });
+      // Modal functionality
+    const modal = document.getElementById("modal");
+    const inputData = document.getElementById("textInput");
+    const openModalBtn = document.getElementById("openModalBtn");
+    const closeModalBtn = document.querySelector(".close");
+
+    // Open modal when button is clicked
+    openModalBtn.addEventListener("click", () => {
+        if(inputData.value == "selene"){
+        modal.style.display = "block";
+        }else{
+            alert("Invalid input. Please enter 'correct word'.");
+        }
+    });
+
+    // Close modal when 'X' is clicked
+    closeModalBtn.addEventListener("click", () => {
+        modal.style.display = "none";
+    });
+    const morseCode = { 'A': '.-', 'B': '-...', 'C': '-.-.', 'D': '-..', 'E': '.', 'F': '..-.', 'G': '--.', 'H': '....', 'I': '..', 'J': '.---', 'K': '-.-', 'L': '.-..', 'M': '--', 'N': '-.', 'O': '---', 'P': '.--.', 'Q': '--.-', 'R': '.-.', 'S': '...', 'T': '-', 'U': '..-', 'V': '...-', 'W': '.--', 'X': '-..-', 'Y': '-.--', 'Z': '--..', '1': '.----', '2': '..---', '3': '...--', '4': '....-', '5': '.....', '6': '-....', '7': '--...', '8': '---..', '9': '----.', '0': '-----' };
+        const text = document.getElementById("textInput").value.toUpperCase();
+        const morseText = text.split('').map(char => morseCode[char] || ' ').join(' ');
+    document.getElementById('morse_code').innerHTML = morseText;
+
+
+     const targetDate = new Date("2025-01-20T23:59:59");
+
+    function updateCountdown() {
+        const now = new Date();
+        const distance = targetDate - now;
+
+        if (distance < 0) {
+            clearInterval(countdownInterval);
+            document.getElementById("countdown").innerHTML = "Countdown has ended";
+            return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        document.getElementById("countdown").innerHTML = 
+            `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    const countdownInterval = setInterval(updateCountdown, 1000);
+</script>
+
+</body>
+</html>
